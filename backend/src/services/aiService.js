@@ -1,5 +1,3 @@
-// All AI provider logic lives here. Controllers only call summarizeText().
-
 const PROMPT = (text) =>
   `Summarize the following task description in 1-2 short sentences (max 40 words). ` +
   `Keep the key action items. Return only the summary text.\n\nTask description:\n${text}`;
@@ -12,8 +10,8 @@ const postJson = async (url, body, headers = {}) => {
 
   try {
     const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...headers },
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...headers },
       body: JSON.stringify(body),
       signal: controller.signal,
     });
@@ -25,7 +23,8 @@ const postJson = async (url, body, headers = {}) => {
     }
     return data;
   } catch (err) {
-    if (err.name === 'AbortError') throw new Error('AI provider took too long to respond');
+    if (err.name === "AbortError")
+      throw new Error("AI provider took too long to respond");
     throw err;
   } finally {
     clearTimeout(timer);
@@ -33,56 +32,53 @@ const postJson = async (url, body, headers = {}) => {
 };
 
 const geminiSummary = async (text) => {
-  const model = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+  const model = process.env.GEMINI_MODEL || "gemini-3.5-flash-lite";
   const data = await postJson(
     `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
     { contents: [{ parts: [{ text: PROMPT(text) }] }] },
-    { 'x-goog-api-key': process.env.GEMINI_API_KEY }
+    { "x-goog-api-key": process.env.GEMINI_API_KEY },
   );
   return data?.candidates?.[0]?.content?.parts?.[0]?.text;
 };
 
 const openAiSummary = async (text) => {
   const data = await postJson(
-    'https://api.openai.com/v1/chat/completions',
+    "https://api.openai.com/v1/chat/completions",
     {
-      model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
-      messages: [{ role: 'user', content: PROMPT(text) }],
+      model: process.env.OPENAI_MODEL || "gpt-4o-mini",
+      messages: [{ role: "user", content: PROMPT(text) }],
       max_tokens: 120,
       temperature: 0.3,
     },
-    { Authorization: `Bearer ${process.env.OPENAI_API_KEY}` }
+    { Authorization: `Bearer ${process.env.OPENAI_API_KEY}` },
   );
   return data?.choices?.[0]?.message?.content;
 };
 
-// Offline fallback: first sentence(s) trimmed to ~30 words.
-// Handy for local dev and for reviewers who don't have an API key.
 const mockSummary = async (text) => {
-  await new Promise((r) => setTimeout(r, 800)); // mimic network delay so the loader is visible
-  const clean = text.replace(/\s+/g, ' ').trim();
+  await new Promise((r) => setTimeout(r, 800));
+  const clean = text.replace(/\s+/g, " ").trim();
   const sentences = clean.match(/[^.!?]+[.!?]?/g) || [clean];
 
-  let summary = '';
+  let summary = "";
   for (const s of sentences) {
-    if ((summary + s).split(' ').length > 30) break;
+    if ((summary + s).split(" ").length > 30) break;
     summary += s;
   }
-  if (!summary) summary = clean.split(' ').slice(0, 30).join(' ') + '...';
+  if (!summary) summary = clean.split(" ").slice(0, 30).join(" ") + "...";
   return summary.trim();
 };
 
 const providers = {
-  gemini: { fn: geminiSummary, key: 'GEMINI_API_KEY' },
-  openai: { fn: openAiSummary, key: 'OPENAI_API_KEY' },
+  gemini: { fn: geminiSummary, key: "GEMINI_API_KEY" },
+  openai: { fn: openAiSummary, key: "OPENAI_API_KEY" },
   mock: { fn: mockSummary },
 };
 
 const summarizeText = async (text) => {
-  const name = (process.env.AI_PROVIDER || 'mock').toLowerCase();
+  const name = (process.env.AI_PROVIDER || "mock").toLowerCase();
   let provider = providers[name] || providers.mock;
 
-  // no key configured -> fall back to mock instead of crashing
   if (provider.key && !process.env[provider.key]) {
     console.warn(`${provider.key} missing, using mock summary`);
     provider = providers.mock;
@@ -90,7 +86,7 @@ const summarizeText = async (text) => {
 
   const summary = await provider.fn(text);
   if (!summary || !summary.trim()) {
-    throw new Error('AI returned an empty summary');
+    throw new Error("AI returned an empty summary");
   }
   return summary.trim();
 };

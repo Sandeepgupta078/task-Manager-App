@@ -1,16 +1,21 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-const emptyTask = { title: '', description: '', status: 'pending' };
+const emptyTask = { title: "", description: "", status: "pending" };
 
 // Used both for adding a new task and editing an existing one
-function TaskForm({ initialValues = emptyTask, onSubmit, onCancel, submitLabel = 'Add Task' }) {
+function TaskForm({
+  initialValues = emptyTask,
+  onSubmit,
+  onCancel,
+  submitLabel = "Add Task",
+}) {
   const [form, setForm] = useState(initialValues);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
-    setError('');
+    setError("");
   };
 
   const handleSubmit = async (e) => {
@@ -18,18 +23,18 @@ function TaskForm({ initialValues = emptyTask, onSubmit, onCancel, submitLabel =
     if (saving) return; // ignore double clicks while the request is in flight
 
     if (!form.title.trim()) {
-      setError('Title is required');
+      setError("Title is required");
       return;
     }
     if (form.title.length > 120) {
-      setError('Title should be under 120 characters');
+      setError("Title should be under 120 characters");
       return;
     }
 
     setSaving(true);
     try {
       await onSubmit({ ...form, title: form.title.trim() });
-      if (!onCancel) setForm(emptyTask); // reset only the "add" form
+      if (!onCancel) setForm(emptyTask);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -49,7 +54,12 @@ function TaskForm({ initialValues = emptyTask, onSubmit, onCancel, submitLabel =
           value={form.title}
           onChange={handleChange}
         />
-        <select name="status" className="input" value={form.status} onChange={handleChange}>
+        <select
+          name="status"
+          className="input"
+          value={form.status}
+          onChange={handleChange}
+        >
           <option value="pending">Pending</option>
           <option value="in-progress">In progress</option>
           <option value="completed">Completed</option>
@@ -66,7 +76,7 @@ function TaskForm({ initialValues = emptyTask, onSubmit, onCancel, submitLabel =
 
       <div className="mt-3 flex gap-2">
         <button type="submit" className="btn btn-primary" disabled={saving}>
-          {saving ? 'Saving...' : submitLabel}
+          {saving ? "Saving..." : submitLabel}
         </button>
         {onCancel && (
           <button type="button" className="btn btn-outline" onClick={onCancel}>

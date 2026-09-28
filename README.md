@@ -2,7 +2,7 @@
 
 A simple task manager built with MongoDB, Express, React and Node.js. Users can register, log in, and manage their own tasks. Each task can get a short AI-generated summary of its description.
 
-**Live demo:** _add your deployed link here_
+**Live demo:** _[https://task-manager-app-cyan-nu.vercel.app](https://task-manager-app-cyan-nu.vercel.app)_
 
 ## Tech stack
 
@@ -70,14 +70,14 @@ In development Vite proxies `/api` to the backend, so no extra config is needed.
 
 ### Environment variables (backend)
 
-| Variable | Description |
-|---|---|
-| `PORT` | API port (default 5000) |
-| `MONGO_URI` | MongoDB connection string |
-| `JWT_SECRET` | Secret used to sign tokens |
-| `JWT_EXPIRES_IN` | Token lifetime, e.g. `1d` |
-| `CLIENT_URL` | Frontend URL for CORS |
-| `AI_PROVIDER` | `gemini`, `openai` or `mock` |
+| Variable                          | Description                      |
+| --------------------------------- | -------------------------------- |
+| `PORT`                            | API port (default 5000)          |
+| `MONGO_URI`                       | MongoDB connection string        |
+| `JWT_SECRET`                      | Secret used to sign tokens       |
+| `JWT_EXPIRES_IN`                  | Token lifetime, e.g. `1d`        |
+| `CLIENT_URL`                      | Frontend URL for CORS            |
+| `AI_PROVIDER`                     | `gemini`, `openai` or `mock`     |
 | `GEMINI_API_KEY` / `GEMINI_MODEL` | Needed when provider is `gemini` |
 | `OPENAI_API_KEY` / `OPENAI_MODEL` | Needed when provider is `openai` |
 
@@ -89,30 +89,30 @@ Base URL: `/api`. Protected routes need the auth cookie (set on login) or an `Au
 
 ### Auth
 
-| Method | Endpoint | Body | Notes |
-|---|---|---|---|
-| POST | `/auth/register` | `{ name, email, password }` | Sets cookie, returns user |
-| POST | `/auth/login` | `{ email, password }` | Sets cookie, returns user |
-| POST | `/auth/logout` | – | Clears cookie |
-| GET | `/auth/me` | – | Protected, returns current user |
+| Method | Endpoint         | Body                        | Notes                           |
+| ------ | ---------------- | --------------------------- | ------------------------------- |
+| POST   | `/auth/register` | `{ name, email, password }` | Sets cookie, returns user       |
+| POST   | `/auth/login`    | `{ email, password }`       | Sets cookie, returns user       |
+| POST   | `/auth/logout`   | –                           | Clears cookie                   |
+| GET    | `/auth/me`       | –                           | Protected, returns current user |
 
 ### Tasks (all protected)
 
-| Method | Endpoint | Body / Query | Notes |
-|---|---|---|---|
-| GET | `/tasks` | `?page=1&limit=10&status=pending` | Paginated list of your tasks |
-| GET | `/tasks/:id` | – | Single task |
-| POST | `/tasks` | `{ title, description?, status?, requestId? }` | Same `requestId` twice returns the first task |
-| PUT | `/tasks/:id` | `{ title?, description?, status? }` | Returns updated task |
-| DELETE | `/tasks/:id` | – | |
+| Method | Endpoint     | Body / Query                                   | Notes                                         |
+| ------ | ------------ | ---------------------------------------------- | --------------------------------------------- |
+| GET    | `/tasks`     | `?page=1&limit=10&status=pending`              | Paginated list of your tasks                  |
+| GET    | `/tasks/:id` | –                                              | Single task                                   |
+| POST   | `/tasks`     | `{ title, description?, status?, requestId? }` | Same `requestId` twice returns the first task |
+| PUT    | `/tasks/:id` | `{ title?, description?, status? }`            | Returns updated task                          |
+| DELETE | `/tasks/:id` | –                                              |                                               |
 
 `status` is one of `pending`, `in-progress`, `completed`.
 
 ### AI (protected)
 
-| Method | Endpoint | Body | Response |
-|---|---|---|---|
-| POST | `/ai/summary` | `{ taskId }` or `{ text }` | `{ summary }` |
+| Method | Endpoint      | Body                       | Response      |
+| ------ | ------------- | -------------------------- | ------------- |
+| POST   | `/ai/summary` | `{ taskId }` or `{ text }` | `{ summary }` |
 
 With `taskId`, the summary is also saved on the task. Descriptions under 30 characters are rejected with a 400.
 

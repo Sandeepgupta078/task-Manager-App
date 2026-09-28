@@ -1,0 +1,50 @@
+@import 'tailwindcss';
+
+/* small set of reusable classes so JSX doesn't repeat long class strings */
+@layer components {
+  .card {
+    @apply rounded-lg border border-gray-200 bg-white shadow-sm;
+  }
+
+  .input {
+    @apply w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none
+      focus:border-blue-500 focus:ring-2 focus:ring-blue-200;
+  }
+
+  .input-error {
+    @apply border-red-500 focus:border-red-500 focus:ring-red-200;
+  }
+
+  .field-error {
+    @apply mt-1 text-xs text-red-600;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium
+      transition-colors disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .btn-sm {
+    @apply px-3 py-1.5 text-xs;
+  }
+
+  .btn-primary {
+    @apply bg-blue-600 text-white hover:bg-blue-700;
+  }
+
+  .btn-outline {
+    @apply border border-gray-300 text-gray-700 hover:bg-gray-100;
+  }
+
+  .btn-danger-outline {
+    @apply border border-red-300 text-red-600 hover:bg-red-50;
+  }
+
+  .alert-error {
+    @apply mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700;
+  }
+
+  .spinner {
+    @apply inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent;
+  }
+}
